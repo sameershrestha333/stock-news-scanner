@@ -1,6 +1,17 @@
 spring:
   application:
     name: stock-news-scanner
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_APP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
   port: 8080
@@ -11,3 +22,11 @@ scanner:
   delay-between-symbols-ms: 400
   minimum-importance-score: 2
   maximum-headlines-per-stock: 3
+  symbols: ${SCANNER_SYMBOLS:SPY,QQQ,DIA,IWM,AAPL,MSFT,NVDA,TSLA,AMZN,META}
+  email:
+    to: ${SCANNER_EMAIL_TO:${MAIL_USERNAME:}}
+  schedule:
+    zone: America/Chicago
+    premarket-cron: "0 0 8 ? * MON-FRI"
+    midday-cron: "0 0 12 ? * MON-FRI"
+    after-close-cron: "0 15 15 ? * MON-FRI"
