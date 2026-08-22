@@ -25,8 +25,11 @@ public class NewsImportanceFilter {
 
         KEYWORD_SCORES.put("raises guidance", 3);
         KEYWORD_SCORES.put("cuts guidance", 3);
+        KEYWORD_SCORES.put("raises outlook", 3);
+        KEYWORD_SCORES.put("cuts outlook", 3);
         KEYWORD_SCORES.put("earnings", 3);
-        KEYWORD_SCORES.put("revenue", 3);
+        KEYWORD_SCORES.put("revenue growth", 3);
+        KEYWORD_SCORES.put("revenue forecast", 3);
         KEYWORD_SCORES.put("beats estimates", 3);
         KEYWORD_SCORES.put("misses estimates", 3);
         KEYWORD_SCORES.put("dividend", 3);
@@ -39,8 +42,8 @@ public class NewsImportanceFilter {
         KEYWORD_SCORES.put("upgraded", 2);
         KEYWORD_SCORES.put("downgraded", 2);
         KEYWORD_SCORES.put("price target", 2);
-        KEYWORD_SCORES.put("outlook", 2);
-        KEYWORD_SCORES.put("forecast", 2);
+        KEYWORD_SCORES.put("forecast raised", 2);
+        KEYWORD_SCORES.put("forecast cut", 2);
         KEYWORD_SCORES.put("partnership", 2);
         KEYWORD_SCORES.put("contract", 2);
         KEYWORD_SCORES.put("appoints", 2);
