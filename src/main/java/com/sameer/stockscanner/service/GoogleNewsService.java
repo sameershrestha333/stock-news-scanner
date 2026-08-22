@@ -53,11 +53,21 @@ public class GoogleNewsService {
         List<NewsArticle> articles = new ArrayList<>();
 
         for (SyndEntry entry : feed.getEntries()) {
-            Instant publishedAt = entry.getPublishedDate() == null ? Instant.now() : entry.getPublishedDate().toInstant();
+            if (entry.getPublishedDate() == null) {
+                continue;
+            }
+
+            Instant publishedAt = entry.getPublishedDate().toInstant();
             if (publishedAt.isBefore(cutoff)) {
                 continue;
             }
-            articles.add(new NewsArticle(cleanTitle(entry.getTitle()), sourceFromTitle(entry.getTitle()), entry.getLink(), publishedAt));
+
+            articles.add(new NewsArticle(
+                    cleanTitle(entry.getTitle()),
+                    sourceFromTitle(entry.getTitle()),
+                    entry.getLink(),
+                    publishedAt
+            ));
         }
         return articles;
     }
