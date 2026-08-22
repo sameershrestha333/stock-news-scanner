@@ -3,7 +3,6 @@ package com.sameer.stockscanner.service;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
 import com.sameer.stockscanner.model.NewsArticle;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class GoogleNewsService {
     }
 
     private List<NewsArticle> parse(String xml) throws Exception {
-        SyndFeed feed = new SyndFeedInput().build(new XmlReader(new StringReader(xml)));
+        SyndFeed feed = new SyndFeedInput().build(new StringReader(xml));
         Instant cutoff = Instant.now().minus(lookback);
         List<NewsArticle> articles = new ArrayList<>();
 
