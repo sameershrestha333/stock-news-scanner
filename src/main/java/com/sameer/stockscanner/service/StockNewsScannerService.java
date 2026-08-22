@@ -68,10 +68,29 @@ public class StockNewsScannerService {
 
     private String toSummary(List<NewsArticle> articles) {
         int highestScore = articles.stream().mapToInt(importanceFilter::importanceScore).max().orElse(0);
+        NewsImportanceFilter.Direction overallDirection = articles.stream()
+                .map(importanceFilter::direction)
+                .min(this::compareDirectionPriority)
+                .orElse(NewsImportanceFilter.Direction.WATCH);
         String headlines = articles.stream()
                 .map(article -> "[" + article.source() + "] " + article.title())
                 .collect(Collectors.joining(" | "));
-        return "Importance score: " + highestScore + " | " + headlines;
+        return overallDirection + " | Score: " + highestScore + " | " + headlines;
+    }
+
+    private int compareDirectionPriority(
+            NewsImportanceFilter.Direction first,
+            NewsImportanceFilter.Direction second
+    ) {
+        return Integer.compare(directionPriority(first), directionPriority(second));
+    }
+
+    private int directionPriority(NewsImportanceFilter.Direction direction) {
+        return switch (direction) {
+            case BEARISH -> 0;
+            case BULLISH -> 1;
+            case WATCH -> 2;
+        };
     }
 
     private void pause() {
