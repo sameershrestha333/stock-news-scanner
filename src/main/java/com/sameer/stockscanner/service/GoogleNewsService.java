@@ -86,6 +86,11 @@ public class GoogleNewsService {
             return false;
         }
 
+        if (symbol.length() == 1) {
+            String strictTickerPattern = "(?i)(?:\\$" + Pattern.quote(symbol) + "(?![A-Z0-9])|\\(" + Pattern.quote(symbol) + "\\))";
+            return Pattern.compile(strictTickerPattern).matcher(title).find();
+        }
+
         String pattern = "(?i)(?<![A-Z0-9])\\$?" + Pattern.quote(symbol) + "(?![A-Z0-9])";
         return Pattern.compile(pattern).matcher(title).find();
     }
