@@ -18,10 +18,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class GoogleNewsService {
+
+    private static final Pattern TICKER_TOKEN_PATTERN = Pattern.compile("(?<![A-Z0-9])\\$?[A-Z]{1,5}(?![A-Z0-9])");
+    private static final int MAX_TICKERS_IN_HEADLINE = 3;
 
     private final HttpClient httpClient;
     private final Duration lookback;
@@ -59,14 +63,17 @@ public class GoogleNewsService {
                 continue;
             }
 
+            String title = entry.getTitle();
             Instant publishedAt = entry.getPublishedDate().toInstant();
-            if (publishedAt.isBefore(cutoff) || !mentionsSymbol(entry.getTitle(), symbol)) {
+            if (publishedAt.isBefore(cutoff)
+                    || !mentionsSymbol(title, symbol)
+                    || isBroadMarketRoundup(title)) {
                 continue;
             }
 
             articles.add(new NewsArticle(
-                    cleanTitle(entry.getTitle()),
-                    sourceFromTitle(entry.getTitle()),
+                    cleanTitle(title),
+                    sourceFromTitle(title),
                     entry.getLink(),
                     publishedAt
             ));
@@ -81,6 +88,22 @@ public class GoogleNewsService {
 
         String pattern = "(?i)(?<![A-Z0-9])\\$?" + Pattern.quote(symbol) + "(?![A-Z0-9])";
         return Pattern.compile(pattern).matcher(title).find();
+    }
+
+    private boolean isBroadMarketRoundup(String title) {
+        if (title == null || title.isBlank()) {
+            return true;
+        }
+
+        Matcher matcher = TICKER_TOKEN_PATTERN.matcher(title.toUpperCase());
+        int tickerCount = 0;
+        while (matcher.find()) {
+            tickerCount++;
+            if (tickerCount > MAX_TICKERS_IN_HEADLINE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String cleanTitle(String title) {
