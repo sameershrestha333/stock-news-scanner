@@ -32,6 +32,8 @@ public class NewsImportanceFilter {
             "raises guidance",
             "guidance raised",
             "raises outlook",
+            "raised outlook",
+            "higher outlook",
             "reaffirms guidance",
             "beats estimates",
             "beats expectations",
