@@ -3,28 +3,43 @@ package com.sameer.stockscanner.util;
 import com.sameer.stockscanner.model.NewsArticle;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 
 @Component
 public class NewsImportanceFilter {
 
-    private static final List<String> HIGH_IMPACT_TERMS = List.of(
-            "earnings", "revenue", "profit", "guidance", "forecast",
-            "beats estimates", "misses estimates", "raises outlook", "cuts outlook",
-            "upgrade", "upgraded", "downgrade", "downgraded", "price target",
-            "merger", "acquisition", "acquire", "takeover",
-            "fda approval", "fda", "recall", "bankruptcy",
-            "lawsuit", "investigation", "probe", "antitrust", "sec",
-            "dividend", "buyback", "share repurchase", "ceo resigns", "ceo steps down"
-    );
-
-    public int importanceScore(NewsArticle article) {
-        String text = (article.title() + " " + article.source()).toLowerCase(Locale.US);
-        return (int) HIGH_IMPACT_TERMS.stream().filter(text::contains).count();
-    }
+    private static final String[] FILTERED_KEYS = {
+            "earnings",
+            "raises guidance",
+            "cuts guidance",
+            "upgraded",
+            "downgraded",
+            "price target",
+            "acquisition",
+            "merger",
+            "fda approval",
+            "stock split"
+    };
 
     public boolean isImportant(NewsArticle article, int minimumScore) {
-        return importanceScore(article) >= minimumScore;
+        return !getMatchedKeyword(article).isBlank();
+    }
+
+    public int importanceScore(NewsArticle article) {
+        return getMatchedKeyword(article).isBlank() ? 0 : 1;
+    }
+
+    public String getMatchedKeyword(NewsArticle article) {
+        if (article == null || article.title() == null) {
+            return "";
+        }
+
+        String title = article.title().toLowerCase(Locale.US);
+
+        return Arrays.stream(FILTERED_KEYS)
+                .filter(title::contains)
+                .findFirst()
+                .orElse("");
     }
 }
