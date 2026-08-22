@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: stock-news-scanner
+
+server:
+  port: 8080
+
+scanner:
+  lookback-hours: 24
+  max-symbols-per-request: 200
+  delay-between-symbols-ms: 400
+  minimum-importance-score: 2
+  maximum-headlines-per-stock: 3
