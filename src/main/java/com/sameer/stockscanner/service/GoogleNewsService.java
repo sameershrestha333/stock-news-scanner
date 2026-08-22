@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class GoogleNewsService {
@@ -32,7 +33,8 @@ public class GoogleNewsService {
 
     public List<NewsArticle> findRecentNews(String symbol) {
         try {
-            String query = URLEncoder.encode(symbol.trim().toUpperCase() + " stock when:1d", StandardCharsets.UTF_8);
+            String normalizedSymbol = symbol.trim().toUpperCase();
+            String query = URLEncoder.encode(normalizedSymbol + " stock when:1d", StandardCharsets.UTF_8);
             String rssUrl = "https://news.google.com/rss/search?q=" + query + "&hl=en-US&gl=US&ceid=US:en";
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(rssUrl))
@@ -41,13 +43,13 @@ public class GoogleNewsService {
                     .GET()
                     .build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 200 ? parse(response.body()) : List.of();
+            return response.statusCode() == 200 ? parse(response.body(), normalizedSymbol) : List.of();
         } catch (Exception ignored) {
             return List.of();
         }
     }
 
-    private List<NewsArticle> parse(String xml) throws Exception {
+    private List<NewsArticle> parse(String xml, String symbol) throws Exception {
         SyndFeed feed = new SyndFeedInput().build(new StringReader(xml));
         Instant cutoff = Instant.now().minus(lookback);
         List<NewsArticle> articles = new ArrayList<>();
@@ -58,7 +60,7 @@ public class GoogleNewsService {
             }
 
             Instant publishedAt = entry.getPublishedDate().toInstant();
-            if (publishedAt.isBefore(cutoff)) {
+            if (publishedAt.isBefore(cutoff) || !mentionsSymbol(entry.getTitle(), symbol)) {
                 continue;
             }
 
@@ -70,6 +72,15 @@ public class GoogleNewsService {
             ));
         }
         return articles;
+    }
+
+    private boolean mentionsSymbol(String title, String symbol) {
+        if (title == null || title.isBlank()) {
+            return false;
+        }
+
+        String pattern = "(?i)(?<![A-Z0-9])\\$?" + Pattern.quote(symbol) + "(?![A-Z0-9])";
+        return Pattern.compile(pattern).matcher(title).find();
     }
 
     private String cleanTitle(String title) {
