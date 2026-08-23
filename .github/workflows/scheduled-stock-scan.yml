@@ -1,0 +1,40 @@
+name: Scheduled Stock News Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Central Daylight Time (UTC-5): 8:15 AM, 12:15 PM, 3:15 PM weekdays.
+    # Update the UTC hours when Central Standard Time (UTC-6) begins.
+    - cron: "15 13 * * 1-5"
+    - cron: "15 17 * * 1-5"
+    - cron: "15 20 * * 1-5"
+
+permissions:
+  contents: read
+
+jobs:
+  run-scanner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_APP_PASSWORD: ${{ secrets.MAIL_APP_PASSWORD }}
+      SPRING_PROFILES_ACTIVE: github-actions
+      SPRING_MAIN_WEB_APPLICATION_TYPE: none
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build and test
+        run: mvn --batch-mode test
+
+      - name: Run scanner once
+        run: mvn --batch-mode spring-boot:run
