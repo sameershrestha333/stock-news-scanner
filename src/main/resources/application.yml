@@ -27,6 +27,6 @@ scanner:
     to: ${SCANNER_EMAIL_TO:${MAIL_USERNAME:}}
   schedule:
     zone: America/Chicago
-    premarket-cron: "0 0 8 ? * MON-FRI"
-    midday-cron: "0 0 12 ? * MON-FRI"
+    premarket-cron: "0 15 8 ? * MON-FRI"
+    midday-cron: "0 15 12 ? * MON-FRI"
     after-close-cron: "0 15 15 ? * MON-FRI"
