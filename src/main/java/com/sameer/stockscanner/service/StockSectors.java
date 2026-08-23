@@ -24,7 +24,7 @@ public final class StockSectors {
         return new String[] {
                 "JPM", "BRK.B", "V", "MA", "BAC", "WFC", "GS", "MS", "C", "AXP",
                 "BLK", "SCHW", "SPGI", "COF", "PGR", "KKR", "APO", "ARES", "IBKR", "CME",
-                "ICE", "DFS", "SYF", "ALLY", "USB", "PNC", "TFC", "MET", "AFL", "PRU"
+                "ICE", "SYF", "ALLY", "USB", "PNC", "TFC", "MET", "AFL", "PRU"
         };
     }
 
@@ -63,7 +63,7 @@ public final class StockSectors {
         return new String[] {
                 "XOM", "CVX", "COP", "SHEL", "EOG", "WMB", "SLB", "MPC", "PSX", "OKE",
                 "OXY", "VLO", "KMI", "HAL", "FANG", "DVN", "APA", "EQT", "LNG", "ET",
-                "TRGP", "MPLX", "HES", "NOV"
+                "TRGP", "MPLX", "NOV"
         };
     }
 
